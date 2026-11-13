@@ -371,14 +371,12 @@ BinarySearchTree<Key, Value>::BinarySearchTree()
 {
     // TODO
     root_ = nullptr;
-    //do i need new ..?
 }
 
 template<typename Key, typename Value>
 BinarySearchTree<Key, Value>::~BinarySearchTree()
 {
     // TODO
-    //this is prob dynamic memory ill do later
     postOrderDelete(root_);
 
 }
@@ -463,7 +461,6 @@ template<class Key, class Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &keyValuePair)
 {
     // TODO
-    //Node<Key, Value>* newNode = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, nullptr);
     if(empty()){ //empty tree
         Node<Key, Value>* newNode = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, nullptr);
         root_ = newNode;
@@ -474,6 +471,7 @@ void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &key
         Node<Key, Value> *temp = root_;
         bool inserted = false;
         while(!inserted){
+            //keep checking whether to go left or right until an empty spot on the correct side
             if (keyValuePair.first > temp->getKey()){
                 if (temp->getRight() == nullptr){
                     Node<Key, Value>* newNode = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, temp);
@@ -513,7 +511,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
         return;
     }
     Node<Key, Value> *temp = it.current_;
-    //if node has two children
+    //check if node has two children
     if (temp->getRight()!=nullptr && temp->getLeft()!=nullptr){
         Node<Key, Value> *pred = predecessor(temp);
         nodeSwap(temp, pred);
@@ -526,6 +524,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
     } else {
         child = temp->getRight();
     }
+    //update parent and child linking
     Node<Key, Value>* parent = temp->getParent();
     if (child != nullptr) {
         child->setParent(parent);
@@ -544,6 +543,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 template<class Key, class Value>
 Node<Key, Value>* BinarySearchTree<Key, Value>::successor(Node<Key, Value>* current){
     if (current == nullptr){return nullptr;}
+    //if right child exists, successor is left most node in right subtree
     if (current->getRight() != nullptr){
         Node<Key, Value> *temp = current -> getRight();
         while (temp != nullptr){
@@ -553,7 +553,7 @@ Node<Key, Value>* BinarySearchTree<Key, Value>::successor(Node<Key, Value>* curr
                 temp = temp -> getLeft();
             }
         }
-    }else{
+    }else{ //successor is the parent of the first ancestor that is a left child
         Node<Key, Value> *temp = current;
         Node<Key, Value> *parent = current -> getParent();
         while (parent != nullptr){
@@ -561,8 +561,8 @@ Node<Key, Value>* BinarySearchTree<Key, Value>::successor(Node<Key, Value>* curr
                 return parent;
             }else{
                 temp = parent;
-                parent = temp -> getParent(); //assuming this works even for the root? 
-                //im just assuming it returns nullptr but if not then will have to change this
+                parent = temp -> getParent(); 
+    
             }
         }
     }
@@ -575,6 +575,7 @@ Node<Key, Value>*BinarySearchTree<Key, Value>::predecessor(Node<Key, Value>* cur
 {
     // TODO
     if (current == nullptr){return nullptr;}
+    //if left child exists, predecessor is right most node in left subtree
     if (current->getLeft() != nullptr){
         Node<Key, Value> *temp = current -> getLeft();
         while (temp != nullptr){
@@ -584,7 +585,7 @@ Node<Key, Value>*BinarySearchTree<Key, Value>::predecessor(Node<Key, Value>* cur
                 temp = temp -> getRight();
             }
         }
-    }else{
+    }else{ //predecessor is the parent of the first ancestor that is a right child
         Node<Key, Value> *temp = current;
         Node<Key, Value> *parent = current -> getParent();
         while (parent != nullptr){
@@ -592,8 +593,8 @@ Node<Key, Value>*BinarySearchTree<Key, Value>::predecessor(Node<Key, Value>* cur
                 return parent;
             }else{
                 temp = parent;
-                parent = temp -> getParent(); //assuming this works even for the root? 
-                //im just assuming it returns nullptr but if not then will have to change this
+                parent = temp -> getParent(); 
+    
             }
         }
     }
@@ -630,6 +631,7 @@ BinarySearchTree<Key, Value>::getSmallestNode() const
     }
 
     Node<Key, Value> *temp = root_;
+    //left most node in tree is smallest
     while(temp -> getLeft() != nullptr){
         temp = temp -> getLeft();
     }
@@ -691,7 +693,7 @@ int BinarySearchTree<Key, Value>::checkHeight(Node<Key, Value>* node) const{
     if (node == nullptr){
         return 0;
     }
-
+    //post order traversal
     int leftH = checkHeight(node->getLeft());
     if(leftH == -1){
         return -1;
