@@ -406,6 +406,7 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
         parent->updateBalance(1);  // Right child grew
     }
 
+    //only need fixing if parent balance is not 0 (parent had 1 child now 2)
     if (parent->getBalance() != 0) {
         this->insertFix(newNode);
     }
